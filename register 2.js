@@ -9,15 +9,16 @@ let passConfirm = document.getElementById("passwordConfirm");
 let formErrors = document.getElementById("formErrors");
 let submit = document.getElementById("submit");
 
-form = false;
+form.addEventListener("submit", function (event) { checkForm(e) } );
 
 // create function checkForm()
 function checkForm(e) {
    // prevent default for submission
    e.preventDefault();
 
+   checkValidation();
    // if form validation errors exist:
-   if (!checkValidation(e)) {
+   if (!checkValidation()) {
 
       e.preventDefault();
 
