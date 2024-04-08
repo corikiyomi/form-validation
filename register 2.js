@@ -17,7 +17,9 @@ function checkForm(e) {
    e.preventDefault();
 
    // if form validation errors exist:
-   if (form == false) {
+   if (!checkValidation(e)) {
+
+      e.preventDefault();
 
       // Display the formErrors <div> by removing the hide class
       formErrors.classList.remove("hide");
@@ -33,13 +35,12 @@ function checkForm(e) {
       formErrors.innerHTML = newUL; // OR
       // formErrors.innerHTML = newListItem; 
 
-      // Add the error class to each <input> element with invalid input // FIXME
-      // invalidInput = document.getElementsByClassName("invalid");
-      // for (let elem of invalidInput) {
-      //    elem.classList.add("error");
-      // }
+      // Add the error class to each <input> element with invalid input
+      for (item of invalidInput) {
+         item.classList.add("error");
+      }
 
-   } else if (form == true) { // if no form validation errors exist:
+   } else { // if no form validation errors exist:
       // Hide the formErrors <div> by adding the hide class
       formErrors.classList.add("hide");
 
