@@ -1,105 +1,126 @@
-// The register.js file registers a click event handler for the Register button that prevents the form from submitting. The event handler calls checkForm() to perform data validation
-
-// save global references for the form and input fields
-let form = document.querySelector("form");
-let fullName = document.getElementById("fullName");
-let email = document.getElementById("email");
-let password = document.getElementById("password");
-let passConfirm = document.getElementById("passwordConfirm");
-let formErrors = document.getElementById("formErrors");
-let submit = document.getElementById("submit");
-let emailRegEx = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/;
-
-// create function checkForm()
 function checkForm() {
-   // e.preventDefault();
+   // references
+   let form = document.querySelector("form");
+   let fullName = document.getElementById("fullName");
+   let email = document.getElementById("email");
+   let password = document.getElementById("password");
+   let passConfirm = document.getElementById("passwordConfirm");
+   let formErrors = document.getElementById("formErrors");
+   let submit = document.getElementById("submit");
+   let emailRegEx = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/;
 
-   // Validation Steps
-   let invalidInput = [];
+   // reset formErrors div
+   formErrors.innerHTML = "";
 
-   // 1. Ensure a full name with length greater than or equal to 1 was provided
-   if (!fullName.length) {
-      invalidInput.push(fullName);
-      // otherwise, display "Missing full name"
-      throw new Error("Missing full name.");
-   } 
-   // 2. Ensure that an email address was provided and email address matches the regular expression:
-   // /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/
-   if (!emailRegEx.test(email)) {
-      invalidInput.push(email);
-      // otherwise, display "Invalid or missing email address."
-      throw new error("Invalid or missing email address.");
-   } 
-   // 3. Ensure the password has 10 to 20 characters
-   if (password.length <= 10 || password.length >= 20) {
-      invalidInput.push(password);
-      // otherwise, display "Password must be between 10 and 20 characters."
-      throw new Error("Password must be between 10 and 20 characters.");
-   }
-   // 4. Ensure the password contains at least one lowercase character (use a regular expression)
-   let reLower = /[a-z]/;
-   if (!reLower.test(password)) {
-      if (!(password in invalidInput)) {
-         invalidInput.push(password);
-      }
-      // otherwise, display "Password must contain at least one lowercase character."
-      throw new Error("Password must contain at least one lowercase character.");
-   }
-   // 5. Ensure the password contains at least one uppercase character (use a regular expression)
-   let reUpper = /[A-Z]/;
-   if (!reUpper.test(password)) {
-      if (!(password in invalidInput)) {
-         invalidInput.push(password);
-      }
-      // otherwise, display "Password must contain at least one uppercase character."
-      throw new Error("Password must contain at least one uppercase character.");
-   }
-   // 6. Ensure the password contains at least one digit (use a regular expression)
-   let reDigit = /[0-9]/;
-   if (!reDigit.test(password)) {
-      if (!(password in invalidInput)) {
-         invalidInput.push(password);
-      }
-      // otherwise, display "Password must contain at least one digit."
-      throw new Error("Password must contain at least one digit.");
-   }
-   // 7. Ensure the password and confirmation password match
-   if (passConfirm !== password) {
-      invalidInput.push(passConfirm);
-      // otherwise, display "Password and confirmation password don't match."
-      throw new Error("Password and confirmation password don't match.");
+   // create ul
+   let ul = document.createElement("ul");
+   formErrors.appendChild(ul);
+
+   let invalidInputs = [];
+
+   // fullName check
+   try {
+       if (fullName.value == "") {
+           invalidInputs.push(fullName);
+           throw new Error("Missing full name.");
+       } else {
+           fullName.classList.remove("error");
+       } 
+   } catch(error) {
+        let nameError = document.createElement("li");
+        nameError.innerHTML = error.message;
+        ul.appendChild(nameError);
    }
 
-   // if form validation errors exist:
-   if (invalidInput != []) { 
-      // Display the formErrors <div> by removing the hide class
-      formErrors.classList.remove("hide");
-      // Display each of the associated error messages in the formErrors <div> using an unordered list.
-      // create ul
-      let errorsUL = formErrors.createElement("ul");
-
-      // The error message must be displayed in the order the validation is performed, following the order specified below
-      for (let i = 0; i < (invalidInput.length - 1); i++) {
-         // Add the error class to each <input> element with invalid input
-         invalidInput[i].classList.add("error");
-         // append error message to formErrors div ul
-         let li = invalidInput[i].Error;
-         errorsUL.appendChild(li);
-      }
-
-   } else { // if no form validation errors exist:
-      // Hide the formErrors <div> by adding the hide class
-      formErrors.classList.remove("hide");
-      // Remove the error class from all text, email, and password <input> elements
-      let errorClass = document.getElementsByClassName("error");
-      errorClass.forEach(function(item) {
-         item.classList.remove("error");
-      }) 
+   // email check
+   try {
+       if (!emailRegEx.test(email.value)) {
+           invalidInputs.push(email);
+           throw new Error("Invalid or missing email address.");
+       } else {
+           email.classList.remove("error");
+       }
+   } catch(error) {
+       let emailError = document.createElement("li");
+       emailError.innerHTML = error.message;
+       ul.appendChild(emailError);
    }
+
+   // password checks
+   try {
+       if (password.value.length < 10 || password.value.length > 20) {
+           invalidInputs.push(password);
+           throw new Error("Password must be between 10 and 20 characters.");
+       }
+   } catch(error) {
+       let lengthError = document.createElement("li");
+       lengthError.innerHTML = error.message;
+       ul.appendChild(lengthError);
+   }
+   try {
+        let reLower = /.*[a-z]/;
+        if (!reLower.test(password)) {
+            if (!(password in invalidInputs)) {
+                invalidInputs.push(password);
+            }
+            throw new Error("Password must contain at least one lowercase character.");
+        }
+   } catch(error) {
+       let lowerError = document.createElement("li");
+       lowerError.innerHTML = error.message;
+       ul.appendChild(lowerError);
+   }
+   try {
+       let reUpper = /.*[A-Z]/;
+       if (!reUpper.test(password)) {
+           invalidInputs.push(password);
+           throw new Error("Password must contain at least one uppercase character.");
+       }
+   } catch(error) {
+       let upperError = document.createElement("li");
+       upperError.innerHTML = error.message;
+       ul.appendChild(upperError);
+   }
+   try {
+       let reDigit = /.*[0-9]/;
+       if (!reDigit.test(password)) {
+           if (!(password in invalidInputs)) {
+               invalidInputs.push(password);
+           }
+           throw new Error("Password must contain at least one digit.");
+       }
+   } catch(error) {
+       let digitError = document.createElement("li");
+       digitError.innerHTML = error.message;
+       ul.appendChild(digitError);
+   }
+   try {
+       if (passConfirm !== password) {
+           invalidInputs.push(passConfirm);
+           throw new Error("Password and confirmation password don't match.");
+       }
+   } catch(error) {
+       let passMatch = document.createElement("li");
+       passMatch.innerHTML = error.message;
+       ul.appendChild(passMatch);
+   }
+
+
+    // if no errors exist
+   if (invalidInputs.length == 0) {
+       formErrors.classList.add("hide");
+       formErrors.classList.remove("error");
+   } else {
+       formErrors.classList.remove("hide");
+       for (let x of invalidInputs) {
+           x.classList.add("error");
+        }
+    }
 }
 
 document.getElementById("submit").addEventListener("click", function(event) {
    checkForm();
+
    // Prevent default form action. DO NOT REMOVE THIS LINE
    event.preventDefault();
 });
